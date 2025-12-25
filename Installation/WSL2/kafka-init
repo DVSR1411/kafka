@@ -1,0 +1,23 @@
+# To install kafka in wsl2,
+
+# Install java
+wget -O - https://apt.corretto.aws/corretto.key | sudo gpg --dearmor -o /usr/share/keyrings/corretto-keyring.gpg && \
+echo "deb [signed-by=/usr/share/keyrings/corretto-keyring.gpg] https://apt.corretto.aws stable main" | sudo tee /etc/apt/sources.list.d/corretto.list
+sudo apt-get update; sudo apt-get install -y java-21-amazon-corretto-jdk
+
+# Install kafka
+wget https://dlcdn.apache.org/kafka/4.1.1/kafka_2.13-4.1.1.tgz
+tar -xvzf kafka_2.13-4.1.1.tgz
+mv kafka_2.13-4.1.1 kafka
+
+nano .bashrc
+# Set path
+PATH="$PATH:/home/user/kafka/bin"
+source .bashrc
+
+# Go to kafka/bin folder (Needed during first start)
+KAFKA_CLUSTER_ID="$(bin/kafka-storage.sh random-uuid)"
+bin/kafka-storage.sh format --standalone -t $KAFKA_CLUSTER_ID -c config/server.properties
+
+# To run kafka
+bin/kafka-server-start.sh config/server.properties
